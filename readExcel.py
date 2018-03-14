@@ -2,6 +2,7 @@
 
 from openpyxl import load_workbook
 from openpyxl.styles import Border, Side, PatternFill, Font, GradientFill, Alignment
+from openpyxl.utils import coordinate_from_string, column_index_from_string
 import sys
 
 #https://www.jianshu.com/p/ce2ba7caa414
@@ -32,22 +33,24 @@ def reloadExcel(fileExcel):
     #         print(cell.value)
 
     for sheet in wb:
-        dataSheetData = []
-        for row in sheet_ranges['A4':'U55']:
-            dataRowList = [];
+        # for row in sheet['A4':'U4']:
+        for row in sheet.iter_rows(min_row=4, max_col=21, max_row=55):
+            dataSheetData = []
+            dataRowList = []
             for cell in row:
-             dataList.append(cell);
-            if dataDictionary.has_key(str(cell(row=row, column=4))):
-                dataDictionary[str(cell(row=row, column=4))].append(dataRowList)
-            else
-                dataSheetData.append(dataList);
-                dataDictionary[str(cell(row=row, column=4))] = dataSheetData
+                dataRowList.append(cell.value)
+            if dataDictionary.has_key(sheet.cell(row=cell.row, column=1).value):
+                dataDictionary[sheet.cell(row=cell.row, column=1).value].append(dataRowList)
+            else:
+                dataSheetData.append(dataRowList)
+                dataDictionary[sheet.cell(row=cell.row, column=1).value] = dataSheetData
 
-            
 
-    copyNewExcel();
+    # print(dataDictionary)            
 
-def copyNewExcel():
+    copyNewExcel(dataDictionary)
+
+def copyNewExcel(dataDictionary):
 
     #----------------------------华丽的分隔线---------------------------------------
     #读到模板文件
@@ -57,18 +60,28 @@ def copyNewExcel():
     template_sheet_range = wb_template['Sheet1']
 
     #设置单元格值
-    template_sheet_range['D8'] = '这是一个测试'
+    # template_sheet_range['D8'] = '这是一个测试'
 
     #设置工作表名称
-    template_sheet_range.title = 'test'
+    # template_sheet_range.title = 'test'
     #复制新的工作表
-    copy_sheet_range = wb_template.copy_worksheet(template_sheet_range)
-    copy_sheet_range.title = 'copytest'
+    # copy_sheet_range = wb_template.copy_worksheet(template_sheet_range)
+    # copy_sheet_range.title = 'copytest'
 
     #添加新的工作表
     #ws1 = wb_template.create_sheet('Mysheet')
 
-    setSheeBoder(template_sheet_range, copy_sheet_range);
+    # setSheeBoder(template_sheet_range, copy_sheet_range);
+
+
+    for k, v in dataDictionary.items():
+        copy_sheet_range = wb_template.copy_worksheet(template_sheet_range)
+        copy_sheet_range.title = str(k)
+        setSheeBoder(template_sheet_range, copy_sheet_range)
+        copy_sheet_range['A2'] = v[0][1]
+        for index, row in enumerate(v):
+            for column in range(3, 9):
+                copy_sheet_range.cell(row = index + 7, column = column).value = row[column]
 
     saveExcel(wb_template);
 
@@ -148,7 +161,7 @@ def saveExcel(wb_template):
     wb_template.save('document.xlsx')
 
 def main():
-    print('开始处理EXCEL----------');
-    reloadExcel('TLW-3月.xlsx');
+    print('开始处理EXCEL----------')
+    reloadExcel('TLW-3月.xlsx')
 
-main();
+main()
