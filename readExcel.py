@@ -4,7 +4,7 @@ from openpyxl import load_workbook
 from openpyxl.styles import Border, Side, PatternFill, Font, GradientFill, Alignment
 import sys
 
-
+#https://www.jianshu.com/p/ce2ba7caa414
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -20,7 +20,7 @@ def reloadExcel(fileExcel):
     #获取单元格值
     #cell_value = sheet_ranges['D18'].value
 
-    dataDictionary = {};
+    dataDictionary = {}
     #循环所有工作表
     # for sheet in wb:
     #     print(sheet.title)
@@ -32,11 +32,18 @@ def reloadExcel(fileExcel):
     #         print(cell.value)
 
     for sheet in wb:
+        dataSheetData = []
         for row in sheet_ranges['A4':'U55']:
-            dataList = [];
+            dataRowList = [];
             for cell in row:
              dataList.append(cell);
-            pass
+            if dataDictionary.has_key(str(cell(row=row, column=4))):
+                dataDictionary[str(cell(row=row, column=4))].append(dataRowList)
+            else
+                dataSheetData.append(dataList);
+                dataDictionary[str(cell(row=row, column=4))] = dataSheetData
+
+            
 
     copyNewExcel();
 
