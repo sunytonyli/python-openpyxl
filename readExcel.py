@@ -78,10 +78,12 @@ def copyNewExcel(dataDictionary):
         copy_sheet_range = wb_template.copy_worksheet(template_sheet_range)
         copy_sheet_range.title = str(k)
         setSheeBoder(template_sheet_range, copy_sheet_range)
-        copy_sheet_range['A2'] = v[0][1]
+        copy_sheet_range['A2'] = str('姓名:') + v[0][1]
         for index, row in enumerate(v):
             for column in range(3, 9):
                 copy_sheet_range.cell(row = index + 7, column = column).value = row[column]
+
+    wb_template.remove(wb_template['Sheet1']);
 
     saveExcel(wb_template);
 
