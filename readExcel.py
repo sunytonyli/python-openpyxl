@@ -4,16 +4,22 @@ from openpyxl import load_workbook
 from openpyxl.styles import Border, Side, PatternFill, Font, GradientFill, Alignment
 from openpyxl.utils import coordinate_from_string, column_index_from_string
 import sys
+from datetime import datetime, timedelta, date
 
 #https://www.jianshu.com/p/ce2ba7caa414
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
+dt = date(2018, 4, 1)
 
-
+#读取分表
 def reloadExcel(fileExcel):
+
     #读到文件
     wb = load_workbook(filename = fileExcel, data_only=True)
+
+    #读取汇总文件并删除
+    totalDataDictionary = reloadTotalExcel(wb)
 
     #根据名称获取工作表
     #sheet_ranges = wb['1']
@@ -48,9 +54,32 @@ def reloadExcel(fileExcel):
 
     # print(dataDictionary)            
 
-    copyNewExcel(dataDictionary)
+    copyNewExcel(dataDictionary, totalDataDictionary)
 
-def copyNewExcel(dataDictionary):
+def reloadTotalExcel(wb):
+
+    #wb = load_workbook(filename = fileExcel, data_only=True)
+    sheet = wb.worksheets[0]
+
+    dataDictionary = {}
+
+    # for row in sheet['A4':'U4']:
+    for row in sheet.iter_rows(min_row=3, max_col=45, max_row=55):
+        dataSheetData = []
+        dataRowList = []
+        for cell in row:
+            dataRowList.append(cell.value)
+        if dataDictionary.has_key(sheet.cell(row=cell.row, column=1).value):
+            dataDictionary[sheet.cell(row=cell.row, column=1).value].append(dataRowList)
+        else:
+            dataSheetData.append(dataRowList)
+            dataDictionary[sheet.cell(row=cell.row, column=1).value] = dataSheetData
+
+    wb.remove(sheet)
+    return dataDictionary;
+
+#为模板赋值
+def copyNewExcel(dataDictionary, totalDataDictionary):
 
     #----------------------------华丽的分隔线---------------------------------------
     #读到模板文件
@@ -78,10 +107,30 @@ def copyNewExcel(dataDictionary):
         copy_sheet_range = wb_template.copy_worksheet(template_sheet_range)
         copy_sheet_range.title = str(k)
         setSheeBoder(template_sheet_range, copy_sheet_range)
+        copy_sheet_range['A1'] = str('团乐网礼品兑换券领取表（{}月份）'.format(monthFormat(dt.strftime('%m'))))
         copy_sheet_range['A2'] = str('姓名:') + v[0][1]
+        copy_sheet_range['E2'] = str('电话:')
+        copy_sheet_range['H2'] = str('身份证号码:')
+        copy_sheet_range['K2'] = str('备注:')
+        copy_sheet_range['C6'] = 0 if totalDataDictionary[k][0][38] == None else totalDataDictionary[k][0][38]
+        copy_sheet_range['E6'] = 0 if totalDataDictionary[k][0][41] == None else totalDataDictionary[k][0][41]
+        copy_sheet_range['G6'] = 0 if totalDataDictionary[k][0][44] == None else totalDataDictionary[k][0][44]
+
         for index, row in enumerate(v):
-            for column in range(3, 9):
-                copy_sheet_range.cell(row = index + 7, column = column).value = row[column]
+            for column in range(3, 6):
+                copy_sheet_range.cell(row = index + 8, column = column).value = row[column + 14]
+            #消费账户总数
+            copy_sheet_range.cell(row = index + 8, column = 6).value = (row[2] if row[2] != None else 0) + (row[3] if row[3] != None else 0) + (row[7] if row[7] != None else 0) + (row[8] if row[8] != None else 0) + (row[12] if row[12] != None else 0) + (row[13] if row[13] != None else 0)
+            #增值账户总数
+            copy_sheet_range.cell(row = index + 8, column = 7).value = (row[4] if row[4] != None else 0) + (row[9] if row[9] != None else 0) + (row[14] if row[14] != None else 0)
+            #转介绍总数
+            copy_sheet_range.cell(row = index + 8, column = 8).value = (row[5] if row[5] != None else 0) + (row[10] if row[10] != None else 0) + (row[15] if row[15] != None else 0)
+            #兑换券合计
+            copy_sheet_range.cell(row = index + 8, column = 9).value = 0 if totalDataDictionary[k][0][35] == None else totalDataDictionary[k][0][35]
+            #星期
+            copy_sheet_range.cell(row = index + 8, column = 1).value = weekday((dt + timedelta(days=index)).strftime('%w'))
+            #日期
+            copy_sheet_range.cell(row = index + 8, column = 2).value = (dt + timedelta(days=index)).strftime('%d')
 
     wb_template.remove(wb_template['Sheet1']);
 
@@ -145,22 +194,32 @@ def setSheeBoder(template_sheet_range, copy_sheet_range):
     style_range(template_sheet_range, 'E2:G3', border=border, fill=None, font=None, alignment=None)
     style_range(template_sheet_range, 'H2:J3', border=border, fill=None, font=None, alignment=None)
     style_range(template_sheet_range, 'K2:K3', border=border, fill=None, font=None, alignment=None)
-    style_range(template_sheet_range, 'A4:J5', border=border, fill=None, font=None, alignment=None)
-    style_range(template_sheet_range, 'K4:K37', border=border, fill=None, font=None, alignment=None)
+    # style_range(template_sheet_range, 'A4:J5', border=border, fill=None, font=None, alignment=None)
+    style_range(template_sheet_range, 'K4:K38', border=border, fill=None, font=None, alignment=None)
 
     style_range(copy_sheet_range, 'A1:K1', border=border, fill=None, font=None, alignment=None)
     style_range(copy_sheet_range, 'A2:D3', border=border, fill=None, font=None, alignment=None)
     style_range(copy_sheet_range, 'E2:G3', border=border, fill=None, font=None, alignment=None)
     style_range(copy_sheet_range, 'H2:J3', border=border, fill=None, font=None, alignment=None)
     style_range(copy_sheet_range, 'K2:K3', border=border, fill=None, font=None, alignment=None)
-    style_range(copy_sheet_range, 'A4:J5', border=border, fill=None, font=None, alignment=None)
-    style_range(copy_sheet_range, 'K4:K37', border=border, fill=None, font=None, alignment=None)
+    # style_range(copy_sheet_range, 'A4:J5', border=border, fill=None, font=None, alignment=None)
+    style_range(copy_sheet_range, 'K4:K38', border=border, fill=None, font=None, alignment=None)
 
 
 def saveExcel(wb_template):
     #保存工作簿 template:是否做为模板
     wb_template.template = False
     wb_template.save('document.xlsx')
+
+def weekday(w):
+    wd = {'0': '日', '1': '一', '2': '二', '3': '三', '4': '四', '5': '五', '6': '六'}
+    return wd[w]
+
+def monthFormat(m):
+    if m.startswith('0', 0, 1):
+        return m[1:]
+    else:
+        return m
 
 def main():
     print('开始处理EXCEL----------')
