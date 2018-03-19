@@ -10,7 +10,7 @@ from datetime import datetime, timedelta, date
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
-dt = date(2018, 4, 1)
+dt = date(2018, 3, 1)
 
 #读取分表
 def reloadExcel(fileExcel):
@@ -115,6 +115,8 @@ def copyNewExcel(dataDictionary, totalDataDictionary):
         copy_sheet_range['C6'] = 0 if totalDataDictionary[k][0][38] == None else totalDataDictionary[k][0][38]
         copy_sheet_range['E6'] = 0 if totalDataDictionary[k][0][41] == None else totalDataDictionary[k][0][41]
         copy_sheet_range['G6'] = 0 if totalDataDictionary[k][0][44] == None else totalDataDictionary[k][0][44]
+        #合计
+        copy_sheet_range['I39'] = 0 if totalDataDictionary[k][0][35] == None else totalDataDictionary[k][0][35]
 
         for index, row in enumerate(v):
             for column in range(3, 6):
@@ -126,7 +128,7 @@ def copyNewExcel(dataDictionary, totalDataDictionary):
             #转介绍总数
             copy_sheet_range.cell(row = index + 8, column = 8).value = (row[5] if row[5] != None else 0) + (row[10] if row[10] != None else 0) + (row[15] if row[15] != None else 0)
             #兑换券合计
-            copy_sheet_range.cell(row = index + 8, column = 9).value = 0 if totalDataDictionary[k][0][35] == None else totalDataDictionary[k][0][35]
+            copy_sheet_range.cell(row = index + 8, column = 9).value = 0 if row[20] == None else row[20]
             #星期
             copy_sheet_range.cell(row = index + 8, column = 1).value = weekday((dt + timedelta(days=index)).strftime('%w'))
             #日期
@@ -196,6 +198,8 @@ def setSheeBoder(template_sheet_range, copy_sheet_range):
     style_range(template_sheet_range, 'K2:K3', border=border, fill=None, font=None, alignment=None)
     # style_range(template_sheet_range, 'A4:J5', border=border, fill=None, font=None, alignment=None)
     style_range(template_sheet_range, 'K4:K38', border=border, fill=None, font=None, alignment=None)
+    style_range(template_sheet_range, 'J39:K39', border=border, fill=None, font=None, alignment=None)
+    style_range(template_sheet_range, 'A39:H39', border=border, fill=None, font=None, alignment=None)
 
     style_range(copy_sheet_range, 'A1:K1', border=border, fill=None, font=None, alignment=None)
     style_range(copy_sheet_range, 'A2:D3', border=border, fill=None, font=None, alignment=None)
@@ -204,12 +208,15 @@ def setSheeBoder(template_sheet_range, copy_sheet_range):
     style_range(copy_sheet_range, 'K2:K3', border=border, fill=None, font=None, alignment=None)
     # style_range(copy_sheet_range, 'A4:J5', border=border, fill=None, font=None, alignment=None)
     style_range(copy_sheet_range, 'K4:K38', border=border, fill=None, font=None, alignment=None)
+    style_range(copy_sheet_range, 'J39:K39', border=border, fill=None, font=None, alignment=None)
+    style_range(copy_sheet_range, 'A39:H39', border=border, fill=None, font=None, alignment=None)
+
 
 
 def saveExcel(wb_template):
     #保存工作簿 template:是否做为模板
     wb_template.template = False
-    wb_template.save('document.xlsx')
+    wb_template.save('TLW.xlsx')
 
 def weekday(w):
     wd = {'0': '日', '1': '一', '2': '二', '3': '三', '4': '四', '5': '五', '6': '六'}

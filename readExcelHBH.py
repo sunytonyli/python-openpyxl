@@ -121,6 +121,8 @@ def copyNewExcel(dataDictionary, totalDataDictionary):
         copy_sheet_range['I4'] = 0 if totalDataDictionary[k][0][41] == None else totalDataDictionary[k][0][41]
         #推荐
         copy_sheet_range['J4'] = 0 if totalDataDictionary[k][0][43] == None else totalDataDictionary[k][0][43]
+        #合计
+        copy_sheet_range['F37'] = 0 if totalDataDictionary[k][0][2] == None else totalDataDictionary[k][0][2]
 
         for index, row in enumerate(v):
             for column in range(2, 7):
@@ -194,6 +196,9 @@ def setSheeBoder(template_sheet_range, copy_sheet_range):
     
     style_range(template_sheet_range, 'E3:E4', border=border, fill=None, font=None, alignment=None)
     style_range(template_sheet_range, 'K3:K4', border=border, fill=None, font=None, alignment=None)
+    style_range(template_sheet_range, 'A37:E37', border=border, fill=None, font=None, alignment=None)
+    style_range(template_sheet_range, 'H37:K37', border=border, fill=None, font=None, alignment=None)
+    style_range(template_sheet_range, 'F37:G37', border=border, fill=None, font=None, alignment=None)
 
     style_range(copy_sheet_range, 'A1:B1', border=border, fill=None, font=None, alignment=None)
     style_range(copy_sheet_range, 'A3:B4', border=border, fill=None, font=None, alignment=None)
@@ -204,6 +209,9 @@ def setSheeBoder(template_sheet_range, copy_sheet_range):
     
     style_range(copy_sheet_range, 'E3:E4', border=border, fill=None, font=None, alignment=None)
     style_range(copy_sheet_range, 'K3:K4', border=border, fill=None, font=None, alignment=None)
+    style_range(copy_sheet_range, 'A37:E37', border=border, fill=None, font=None, alignment=None)
+    style_range(copy_sheet_range, 'H37:K37', border=border, fill=None, font=None, alignment=None)
+    style_range(copy_sheet_range, 'F37:G37', border=border, fill=None, font=None, alignment=None)
 
     for row in range(6, 37):
         style_range(template_sheet_range, ('F' + str(row)) + ':' + ('G' + str(row)), border=border, fill=None, font=None, alignment=None)
