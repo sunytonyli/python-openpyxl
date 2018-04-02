@@ -40,7 +40,7 @@ def reloadExcel(fileExcel):
 
     for sheet in wb:
         # for row in sheet['A4':'U4']:
-        for row in sheet.iter_rows(min_row=4, max_col=21, max_row=55):
+        for row in sheet.iter_rows(min_row=4, max_col=26, max_row=62):
             dataSheetData = []
             dataRowList = []
             for cell in row:
@@ -64,7 +64,7 @@ def reloadTotalExcel(wb):
     dataDictionary = {}
 
     # for row in sheet['A4':'U4']:
-    for row in sheet.iter_rows(min_row=3, max_col=45, max_row=55):
+    for row in sheet.iter_rows(min_row=3, max_col=45, max_row=61):
         dataSheetData = []
         dataRowList = []
         for cell in row:
@@ -83,7 +83,7 @@ def copyNewExcel(dataDictionary, totalDataDictionary):
 
     #----------------------------华丽的分隔线---------------------------------------
     #读到模板文件
-    wb_template = load_workbook(filename = '个人.xlsx', data_only=True)
+    wb_template = load_workbook(filename = 'TLW-个人.xlsx', data_only=True)
 
     #获取工作表
     template_sheet_range = wb_template['Sheet1']
@@ -111,12 +111,14 @@ def copyNewExcel(dataDictionary, totalDataDictionary):
         copy_sheet_range['A2'] = str('姓名:') + v[0][1]
         copy_sheet_range['E2'] = str('电话:')
         copy_sheet_range['H2'] = str('身份证号码:')
-        copy_sheet_range['K2'] = str('备注:')
+        copy_sheet_range['L2'] = str('备注:')
         copy_sheet_range['C6'] = 0 if totalDataDictionary[k][0][38] == None else totalDataDictionary[k][0][38]
         copy_sheet_range['E6'] = 0 if totalDataDictionary[k][0][41] == None else totalDataDictionary[k][0][41]
         copy_sheet_range['G6'] = 0 if totalDataDictionary[k][0][44] == None else totalDataDictionary[k][0][44]
         #合计
-        copy_sheet_range['I39'] = 0 if totalDataDictionary[k][0][35] == None else totalDataDictionary[k][0][35]
+        copy_sheet_range['I39'] = 0 if totalDataDictionary[k][0][33] == None else totalDataDictionary[k][0][33]
+        copy_sheet_range['J39'] = 0 if totalDataDictionary[k][0][34] == None else totalDataDictionary[k][0][34]
+        copy_sheet_range['K39'] = 0 if totalDataDictionary[k][0][35] == None else totalDataDictionary[k][0][35]
 
         for index, row in enumerate(v):
             for column in range(3, 6):
@@ -133,6 +135,8 @@ def copyNewExcel(dataDictionary, totalDataDictionary):
             copy_sheet_range.cell(row = index + 8, column = 1).value = weekday((dt + timedelta(days=index)).strftime('%w'))
             #日期
             copy_sheet_range.cell(row = index + 8, column = 2).value = (dt + timedelta(days=index)).strftime('%d')
+            #中途领取
+            copy_sheet_range.cell(row = index + 8, column = 10).value =0 if row[25] == None else row[25]
 
     wb_template.remove(wb_template['Sheet1']);
 
@@ -191,26 +195,35 @@ def setSheeBoder(template_sheet_range, copy_sheet_range):
 
     #------------------------------------华丽的分隔线------------------------------------------------                
 
-    style_range(template_sheet_range, 'A1:K1', border=border, fill=None, font=None, alignment=None)
+    style_range(template_sheet_range, 'A1:L1', border=border, fill=None, font=None, alignment=None)
     style_range(template_sheet_range, 'A2:D3', border=border, fill=None, font=None, alignment=None)
     style_range(template_sheet_range, 'E2:G3', border=border, fill=None, font=None, alignment=None)
-    style_range(template_sheet_range, 'H2:J3', border=border, fill=None, font=None, alignment=None)
-    style_range(template_sheet_range, 'K2:K3', border=border, fill=None, font=None, alignment=None)
+    style_range(template_sheet_range, 'H2:K3', border=border, fill=None, font=None, alignment=None)
+    style_range(template_sheet_range, 'L2:L3', border=border, fill=None, font=None, alignment=None)
     # style_range(template_sheet_range, 'A4:J5', border=border, fill=None, font=None, alignment=None)
-    style_range(template_sheet_range, 'K4:K38', border=border, fill=None, font=None, alignment=None)
-    style_range(template_sheet_range, 'J39:K39', border=border, fill=None, font=None, alignment=None)
+    style_range(template_sheet_range, 'A4:K4', border=border, fill=None, font=None, alignment=None)
+    style_range(template_sheet_range, 'K7:K37', border=border, fill=None, font=None, alignment=None)
+    style_range(template_sheet_range, 'L7:L29', border=border, fill=None, font=None, alignment=None)
+    style_range(template_sheet_range, 'L32:L35', border=border, fill=None, font=None, alignment=None)
+    style_range(template_sheet_range, 'L36:L38', border=border, fill=None, font=None, alignment=None)
     style_range(template_sheet_range, 'A39:H39', border=border, fill=None, font=None, alignment=None)
+    style_range(template_sheet_range, 'L30:L31', border=border, fill=None, font=None, alignment=None)
+    style_range(template_sheet_range, 'L2:L6', border=border, fill=None, font=None, alignment=None)
 
-    style_range(copy_sheet_range, 'A1:K1', border=border, fill=None, font=None, alignment=None)
+    style_range(copy_sheet_range, 'A1:L1', border=border, fill=None, font=None, alignment=None)
     style_range(copy_sheet_range, 'A2:D3', border=border, fill=None, font=None, alignment=None)
     style_range(copy_sheet_range, 'E2:G3', border=border, fill=None, font=None, alignment=None)
-    style_range(copy_sheet_range, 'H2:J3', border=border, fill=None, font=None, alignment=None)
-    style_range(copy_sheet_range, 'K2:K3', border=border, fill=None, font=None, alignment=None)
-    # style_range(copy_sheet_range, 'A4:J5', border=border, fill=None, font=None, alignment=None)
-    style_range(copy_sheet_range, 'K4:K38', border=border, fill=None, font=None, alignment=None)
-    style_range(copy_sheet_range, 'J39:K39', border=border, fill=None, font=None, alignment=None)
+    style_range(copy_sheet_range, 'H2:K3', border=border, fill=None, font=None, alignment=None)
+    style_range(copy_sheet_range, 'L2:L3', border=border, fill=None, font=None, alignment=None)
+    # style_range(template_sheet_range, 'A4:J5', border=border, fill=None, font=None, alignment=None)
+    style_range(copy_sheet_range, 'A4:K4', border=border, fill=None, font=None, alignment=None)
+    style_range(copy_sheet_range, 'K7:K37', border=border, fill=None, font=None, alignment=None)
+    style_range(copy_sheet_range, 'L7:L29', border=border, fill=None, font=None, alignment=None)
+    style_range(copy_sheet_range, 'L32:L35', border=border, fill=None, font=None, alignment=None)
+    style_range(copy_sheet_range, 'L36:L38', border=border, fill=None, font=None, alignment=None)
     style_range(copy_sheet_range, 'A39:H39', border=border, fill=None, font=None, alignment=None)
-
+    style_range(copy_sheet_range, 'L30:L31', border=border, fill=None, font=None, alignment=None)
+    style_range(copy_sheet_range, 'L2:L6', border=border, fill=None, font=None, alignment=None)
 
 
 def saveExcel(wb_template):
