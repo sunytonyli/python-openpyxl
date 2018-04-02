@@ -114,11 +114,11 @@ def copyNewExcel(dataDictionary, totalDataDictionary):
         #银卡
         copy_sheet_range['F4'] = 0 if totalDataDictionary[k][0][36] == None else totalDataDictionary[k][0][36]
         #金卡
-        copy_sheet_range['G4'] = 0 if totalDataDictionary[k][0][37] == None else totalDataDictionary[k][0][37]
+        copy_sheet_range['G4'] = 0 if totalDataDictionary[k][0][38] == None else totalDataDictionary[k][0][38]
         #明珠
-        copy_sheet_range['H4'] = 0 if totalDataDictionary[k][0][39] == None else totalDataDictionary[k][0][39]
+        copy_sheet_range['H4'] = 0 if totalDataDictionary[k][0][40] == None else totalDataDictionary[k][0][40]
         #皇冠
-        copy_sheet_range['I4'] = 0 if totalDataDictionary[k][0][41] == None else totalDataDictionary[k][0][41]
+        copy_sheet_range['I4'] = 0 if totalDataDictionary[k][0][42] == None else totalDataDictionary[k][0][42]
         #推荐
         copy_sheet_range['J4'] = 0 if totalDataDictionary[k][0][43] == None else totalDataDictionary[k][0][43]
         #合计
